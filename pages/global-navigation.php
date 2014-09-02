@@ -8,6 +8,7 @@
       <ul class="ddm-sub">
 			<?php if (HasAccess(ACL_MOD_REPO, ACL_ACTION_VIEW)){?><li><a href="repositorylist.php"><?php Translate("List"); ?></a></li><?php } ?>
 			<?php if (IsProviderActive(PROVIDER_REPOSITORY_EDIT) && HasAccess(ACL_MOD_REPO, ACL_ACTION_ADD)){?><li><a href="repositorycreate.php"><?php Translate("Add"); ?></a></li><?php } ?>
+      		<?php if (IsProviderActive(PROVIDER_REPOSITORY_EDIT) && HasAccess(ACL_MOD_SETTINGS, ACL_ACTION_CHANGE)){?><li><a href="repositorycreateproduct.php"><?php Translate("Add Product"); ?></a></li><?php } ?>
       </ul>
     </li>
     <?php } ?>

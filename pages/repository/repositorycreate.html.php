@@ -47,10 +47,29 @@ $(document).ready(function(){
     </div>
 
     <div class="form-field">
-      <label for="repotype"><?php Translate("Type"); ?></label>
-      <select name="repotype">
-        <option value="fsfs" selected="selected"><?php Translate("File System (Recommended)"); ?></option>
-        <option value="bdb"><?php Translate("Berkly DB"); ?></option>
+		<label for="ps"><?php Translate('Product'); ?></label>
+		<select name="ps" id="ps">
+			<?php $a = file('data/products');?>
+			<?php foreach ($a as $rp) : ?>
+				<!-- <option value="<?php print($rp); ?>">
+					<?php print($rp); ?>
+				</option>
+				-->
+				<?php $rp=str_replace(PHP_EOL,'', $rp)?>
+				<option value="<?php print($rp);?>"><?php print($rp);?></option>
+			<?php endforeach; ?>
+		</select>
+	</div>
+    
+    
+
+    <div class="form-field">
+      <label for="protype"><?php Translate("ProjectType"); ?></label>
+      <select name="protype">
+        <option value="App"><?php Translate("App"); ?></option>
+        <option value="OS"><?php Translate("OS"); ?></option>
+		<option value="Driver"><?php Translate("Driver"); ?></option>
+		<option value="Tool"><?php Translate("Tool"); ?></option>
       </select>
     </div>
 
@@ -60,11 +79,19 @@ $(document).ready(function(){
     </div>
 
     <div class="form-field">
+      <label for="repotype"><?php Translate("Type"); ?></label>
+      <select name="repotype">
+        <option value="fsfs" selected="selected"><?php Translate("File System (Recommended)"); ?></option>
+        <option value="bdb"><?php Translate("Berkly DB"); ?></option>
+      </select>
+    </div>
+    
+    <div class="form-field">
       <label for="repostructuretype"><?php Translate("Pre-defined repository structure"); ?></label>
       <select name="repostructuretype" id="repostructuretype">
-        <option value=""><?php Translate("No pre-defined structure"); ?></option>
+        <!--<option value=""><?php Translate("No pre-defined structure"); ?></option> -->
         <option value="single"><?php Translate("Single project structure"); ?></option>
-        <option value="multi"><?php Translate("Multi project structure"); ?></option>
+        <!--<option value="multi"><?php Translate("Multi project structure"); ?></option>-->
       </select>
     </div>
 
@@ -87,6 +114,8 @@ $(document).ready(function(){
     <div class="formsubmit">
       <input type="submit" name="create" value="<?php Translate("Create"); ?>" class="addbtn">
     </div>
+    
+    
   </form>
 
   <p>

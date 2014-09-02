@@ -25,6 +25,7 @@ $repotype = get_request_var("repotype");
 
 $varParentIdentifier = rawurldecode($varParentIdentifierEnc);
 
+
 //
 // Validation
 //
@@ -33,6 +34,8 @@ if ($reponame == NULL) {
 	$engine->addException(new ValidationException(tr("You have to fill out all fields.")));
 }
 else {
+	echo get_request_var("ps").'_'.get_request_var("protype").'_'.$reponame;
+	$reponame=get_request_var("ps").'_'.get_request_var("protype").'_'.$reponame;
 	$r = new \svnadmin\core\entities\Repository($reponame, $varParentIdentifier);
 
 	// Create repository.
