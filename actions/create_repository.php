@@ -34,10 +34,11 @@ if ($reponame == NULL) {
 	$engine->addException(new ValidationException(tr("You have to fill out all fields.")));
 }
 else {
-	echo get_request_var("ps").'_'.get_request_var("protype").'_'.$reponame;
+	//echo get_request_var("ps").'_'.get_request_var("protype").'_'.$reponame;
 	$reponame=get_request_var("ps").'_'.get_request_var("protype").'_'.$reponame;
 	$r = new \svnadmin\core\entities\Repository($reponame, $varParentIdentifier);
-
+	$newap=null;
+	
 	// Create repository.
 	try {
 		$engine->getRepositoryEditProvider()->create($r, $repotype);
@@ -53,6 +54,7 @@ else {
 
 				if ($engine->getAccessPathEditProvider()->createAccessPath($ap)) {
 					$engine->getAccessPathEditProvider()->save();
+					$newap=$ap;
 				}
 			}
 		}
@@ -60,6 +62,47 @@ else {
 			$engine->addException($e2);
 		}
 
+		/*
+		 Jay add 2014.08.19,auto add repo admin
+		*/
+		
+		//1.set repo admin
+		try{
+			if($newap!=null){
+				if($engine->getAclManager()->assignAccessPathAdmin($newap->getPath(),$engine->getSessionUsername()))
+					$engine->addMessage(tr("Assigned user %1 to access-path %0 successfully !",array($newap->getPath(),$engine->getSessionUsername())));
+				//else
+				//	$engine->addException(new Exception(tr("Could not assign user %1 to access-path %0", array($ap->getPath(),$engine->getSessionUsername())));
+		
+				$engine->getAclManager()->save();
+			}
+		}
+		catch (Exception $e4){
+			$engine->addException($e4);
+		}
+		
+		//2.add read-write permission.
+		$oU = new \svnadmin\core\entities\User;
+		$oU->id = $engine->getSessionUsername();
+		$oU->name = $engine->getSessionUsername();
+		
+		$oP = new \svnadmin\core\entities\Permission;
+		$oP->perm = \svnadmin\core\entities\Permission::$PERM_READWRITE;
+		try {
+			$b = $appEngine->getAccessPathEditProvider()->assignUserToAccessPath($oU, $newap, $oP);
+			if (!$b) {
+				throw new Exception("Setting Wrtie/Read ERROR.");
+			}
+			$appEngine->addMessage(tr("Grant %0 permission to %1 on %2", array($oP->perm, $oU->name, $newap->path)));
+			$engine->getAccessPathEditProvider()->save();
+		}
+		catch (Exception $e5) {
+			$appEngine->addException($e5);
+		}
+		
+		/*End*/
+		
+		
 		// Create a initial repository structure.
 		try {
 			$repoPredefinedStructure = get_request_var("repostructuretype");

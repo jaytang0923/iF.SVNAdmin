@@ -56,8 +56,6 @@ try {
 	// All AccessPaths.
 	$list = $appEngine->getAccessPathViewProvider()->getPaths();
 	usort($list, array('\svnadmin\core\entities\AccessPath', "compare"));
-	echo 'paths:',count($list);
-	echo $list[0]->path;
 
 	// Filter access-paths for project-managers.
 	if ($appEngine->isAuthenticationActive())
