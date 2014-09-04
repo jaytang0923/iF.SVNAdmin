@@ -86,7 +86,6 @@ try {
 catch (Exception $ex) {
 	$appEngine->addException($ex);
 }
-echo count($list);
 SetValue("UserList", $users);
 SetValue("AccessPathList", $list);
 ProcessTemplate("accesspath/accesspathlist.html.php");
