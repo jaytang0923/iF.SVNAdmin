@@ -54,6 +54,13 @@ else if (check_request_var('load')) {
 
 $repositoryParentList = array();
 $repositoryList = array();
+$userspaths=array();
+$usersrepos=array();
+
+$oU = new \svnadmin\core\entities\User;
+$oU->id = $engine->getSessionUsername();
+$oU->name = $engine->getSessionUsername();
+
 try {
 	// Repository parent locations.
 	$repositoryParentList = $engine->getRepositoryViewProvider()->getRepositoryParents();
@@ -61,7 +68,43 @@ try {
 	// Repositories of all locations.
 	foreach ($repositoryParentList as $rp) {
 		$repositoryList[$rp->identifier] = $engine->getRepositoryViewProvider()->getRepositoriesOfParent($rp);
-		usort($repositoryList[$rp->identifier], array('\svnadmin\core\entities\Repository', 'compare'));
+		$userspaths[$rp->identifier]=$engine->getAccessPathViewProvider()->getPathsOfUser($oU);
+		
+		if($oU->getName()=='admin')
+		{
+			$usersrepos[$rp->identifier]=$repositoryList[$rp->identifier];
+			continue;
+		}
+		$usersrepos[$rp->identifier]=array();
+		
+		//each repos maybe has more than 1 paths,or 0.
+		foreach($repositoryList[$rp->identifier] as $repos)
+		{
+			$repospaths=$engine->getAccessPathViewProvider()->getPathsOfRepository($repos);
+			
+			//no paths
+			if(!count($repospaths))
+				continue;
+
+			//list repos's paths  0 or 1
+			foreach ($repospaths as $rps)
+			{
+				//list user's paths
+				foreach ($userspaths[$rp->identifier] as $ups)
+				{
+					if($rps->getPath()==$ups->getPath())
+					{
+						//we should show repos ,not paths	
+						//XXX in case of one repos has mul paths and all paths for one user.
+						array_push($usersrepos[$rp->identifier],$repos);
+					}
+					
+				}
+			}
+			
+		}
+		
+		usort($usersrepos[$rp->identifier], array('\svnadmin\core\entities\Repository', 'compare'));
 	}
 	
 	// Show options column?
@@ -78,7 +121,7 @@ catch (Exception $ex) {
 }
 
 SetValue('RepositoryParentList', $repositoryParentList);
-SetValue('RepositoryList', $repositoryList);
+SetValue('RepositoryList', $usersrepos);
 SetValue('ShowDeleteButton', $engine->getConfig()->getValueAsBoolean('GUI', 'RepositoryDeleteEnabled', true));
 ProcessTemplate('repository/repositorylist.html.php');
 ?>
