@@ -70,6 +70,7 @@ $(document).ready(function(){
         <option value="OS"><?php Translate("OS"); ?></option>
 		<option value="Driver"><?php Translate("Driver"); ?></option>
 		<option value="Tool"><?php Translate("Tool"); ?></option>
+        <option value="Server"><?php Translate("Server"); ?></option>
       </select>
     </div>
 
